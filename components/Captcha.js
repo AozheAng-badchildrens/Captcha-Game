@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { useTimerStore } from "@/stores/timerStore";
 
 const Captcha = ({ onChange, captchaKey }) => {
   const [selectedIndexes, setSelectedIndexes] = useState([]);
@@ -13,6 +14,7 @@ const Captcha = ({ onChange, captchaKey }) => {
     return `/api/captcha-image?index=${index}.png&key=${captchaKey}`;
   });
   function toggleIndex(index) {
+    useTimerStore.getState().start();
     setSelectedIndexes((prev) => {
       if (prev.includes(index)) {
         return prev.filter((v) => v !== index);

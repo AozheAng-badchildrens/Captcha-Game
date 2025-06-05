@@ -14,11 +14,29 @@ const sessionOptions = {
 const dogProbability = 0.5;
 
 export function newCaptchaImages() {
+  const dogUsed = new Set();
+  const muffinUsed = new Set();
+
+  const generateUniqueNumber = (usedSet, max) => {
+    if (usedSet.size >= max) return null; // all numbers used
+    let number;
+    do {
+      number = Math.floor(Math.random() * max) + 1;
+    } while (usedSet.has(number));
+    usedSet.add(number);
+    return number;
+  };
+
   return new Array(9).fill(null).map(() => {
     const shouldBeDog = Math.random() < dogProbability;
-    const number = Math.floor(Math.random() * (shouldBeDog ? 10 : 13)) + 1;
-    const filename = (shouldBeDog ? "dog" : "muffin") + number + ".png";
-    return `/dogs-and-muffins/${filename}`;
+
+    if (shouldBeDog) {
+      const number = generateUniqueNumber(dogUsed, 10); // dog1.png to dog10.png
+      return number === null ? null : `/dogs-and-muffins/dog${number}.png`;
+    } else {
+      const number = generateUniqueNumber(muffinUsed, 13); // muffin1.png to muffin13.png
+      return number === null ? null : `/dogs-and-muffins/muffin${number}.png`;
+    }
   });
 }
 

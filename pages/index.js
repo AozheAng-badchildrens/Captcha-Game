@@ -1,7 +1,9 @@
 import Captcha from "@/components/Captcha";
+import Timer from "@/components/Timer";
 import { getIronSession } from "iron-session";
 import { newCaptchaImages } from "./api/captcha-image";
 import { useState } from "react";
+import { useTimerStore } from "@/stores/timerStore";
 
 const sessionOptions = {
   password: process.env.SESSION_SECRET,
@@ -29,22 +31,19 @@ export default function Home({ defaultCaptchaKey }) {
           setCaptchaKey(new Date().getTime());
           alert("Success");
           setMessage("");
+          useTimerStore.getState().stop();
         }
         if (!json.captchaIsOk) {
           setCaptchaKey(new Date().getTime());
-          alert("wrong captcha. try again");
+          // alert("wrong captcha. try again");
+          useTimerStore.getState().flashColor("red", 1000);
         }
       });
     });
   }
   return (
     <main>
-      <input
-        type="text"
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Message"
-        value={message}
-      ></input>
+      <Timer></Timer>
       <Captcha captchaKey={captchaKey} onChange={setSelectedIndexes}></Captcha>
       <button onClick={send}>Send</button>
     </main>
